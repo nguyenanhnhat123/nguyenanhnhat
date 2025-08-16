@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng nhập</title>
+  <meta name="color-scheme" content="light" />
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --panel: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --btn: #111827;
+      --btn-text: #ffffff;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+
+    .panel {
+      width: min(380px, 94vw);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 { margin: 0 0 12px; font-size: 22px; font-weight: 600; }
+    .sub { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+
+    .field { margin-top: 12px; }
+    label { display: block; font-size: 14px; margin-bottom: 6px; }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input::placeholder { color: #9ca3af; }
+
+    input:focus {
+      border-color: #c7d2fe;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .row { margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .link { font-size: 13px; color: inherit; text-decoration: underline; text-underline-offset: 2px; opacity: 0.7; }
+
+    button.btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--btn);
+      color: var(--btn-text);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button.btn:hover { filter: brightness(1.05); }
+    button.btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .msg { display: none; margin-top: 12px; font-size: 14px; padding: 10px 12px; border-radius: 8px; }
+    .msg.error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    .msg.show { display: block; }
+
+    footer { margin-top: 16px; text-align: center; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="panel" role="region" aria-labelledby="title">
+      <h1 id="title">Đăng nhập</h1>
+      <p class="sub">Vui lòng nhập thông tin của bạn</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Mật khẩu</label>
+          <input id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required minlength="6" />
+        </div>
+
+        <div class="row">
+          <span></span>
+          <a href="#" class="link">Quên mật khẩu?</a>
+        </div>
+
+        <div id="error" class="msg error" role="alert" aria-live="polite"></div>
+
+        <button type="submit" id="btn" class="btn">Đăng nhập</button>
+      </form>
+
+      <div class="center" style="margin-top: 12px;">
+        <span class="muted">Chưa có tài khoản?</span>
+        <a href="./register.html" class="link">Đăng ký</a>
+      </div>
+
+      <footer>© FashionHub</footer>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const USERS_KEY = 'fashionhub:users';
+      const SESSION_KEY = 'fashionhub:session';
+
+      function loadUsers() {
+        try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; }
+        catch (e) { return {}; }
+      }
+      function setSession(email) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ email }));
+      }
+
+      const form = document.getElementById('loginForm');
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      const error = document.getElementById('error');
+      const btn = document.getElementById('btn');
+
+      // Thông báo nếu vừa đăng ký xong
+      if (new URLSearchParams(location.search).get('registered') === '1') {
+        const note = document.createElement('div');
+        note.className = 'msg';
+        note.style.display = 'block';
+        note.style.background = '#ecfdf5';
+        note.style.color = '#065f46';
+        note.style.border = '1px solid #a7f3d0';
+        note.style.padding = '10px 12px';
+        note.style.borderRadius = '8px';
+        note.style.marginTop = '12px';
+        note.textContent = 'Đăng ký thành công. Vui lòng đăng nhập.';
+        form.parentElement.insertBefore(note, form);
+        history.replaceState({}, '', location.pathname);
+      }
+
+      function showError(msg) {
+        error.textContent = msg;
+        error.classList.add('show');
+      }
+
+      function clearError() {
+        error.textContent = '';
+        error.classList.remove('show');
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        clearError();
+        const emailVal = email.value.trim().toLowerCase();
+        const pwVal = password.value;
+        if (!emailVal) {
+          showError('Vui lòng nhập email.');
+          email.focus();
+          return;
+        }
+        if (pwVal.length < 6) {
+          showError('Mật khẩu tối thiểu 6 ký tự.');
+          password.focus();
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Đang xử lý...';
+        await new Promise((r) => setTimeout(r, 300));
+
+        const users = loadUsers();
+        const user = users[emailVal];
+        if (!user || user.password !== pwVal) {
+          btn.disabled = false; btn.textContent = 'Đăng nhập';
+          showError('Email hoặc mật khẩu không đúng.');
+          return;
+        }
+
+        setSession(emailVal);
+        // Chuyển đến trang chủ
+        window.location.href = './home.html';
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FashionHub — Trang chủ</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    /* Trang chủ nâng cấp: hero + sản phẩm */
+    .hero {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 360px;
+      background: #111;
+      display: grid;
+      align-items: end;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+    }
+    .hero__media {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=60');
+      background-size: cover; background-position: center;
+      filter: saturate(1.05);
+    }
+    .hero__overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.0) 20%, rgba(0,0,0,0.55) 75%);
+    }
+    .hero__content {
+      position: relative; z-index: 1;
+      color: #fff;
+      padding: 26px;
+    }
+    .hero__eyebrow { font-size: 12px; letter-spacing: 1px; opacity: .9; text-transform: uppercase; }
+    .hero h1 { margin: 4px 0 6px; font-size: clamp(24px, 3.2vw, 36px); color: #fff; }
+    .hero .sub { color: #e5e7eb; margin: 0; }
+    .hero__actions { margin-top: 14px; display: flex; gap: 10px; }
+
+    /* Sản phẩm */
+    .products h2 { margin-top: 8px; }
+    .product-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+    .product-media {
+      position: relative; overflow: hidden; border-radius: 10px; border: 1px solid var(--line);
+      aspect-ratio: 4 / 5; background: #f3f4f6;
+    }
+    .product-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .25s ease; }
+    .product-media:hover img { transform: scale(1.04); }
+    .product-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .product-title { margin: 0 0 6px; font-weight: 600; font-size: 15px; }
+    .product-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; }
+    .price { font-weight: 700; }
+    .badge { position: absolute; top: 10px; left: 10px; background: #111827; color:#fff; font-size: 12px; padding: 6px 8px; border-radius: 999px; opacity: .95; }
+    .fav-btn { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: #111827; cursor: pointer; box-shadow: 0 2px 6px rgba(17,24,39,0.06); transition: transform 0.06s ease, filter 0.15s ease, background 0.15s ease, color 0.15s ease; }
+    .fav-btn:hover { filter: brightness(1.02); }
+    .fav-btn.active { background: #ef4444; border-color: #ef4444; color: #fff; }
+    .hero__nav { position: absolute; left: 16px; bottom: 12px; display: flex; gap: 6px; z-index: 2; }
+    .hero__dot { width: 8px; height: 8px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.6); cursor: pointer; }
+    .hero__dot.is-active { background: #ffffff; }
+
+    /* Danh mục ngắn (tùy chọn) */
+    .categories { display: flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 16px; }
+    .chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: linear-gradient(180deg, #ffffff, #f9fafb); border-radius: 999px; padding: 8px 14px; font-size: 13px; color: #111827; text-decoration: none; box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04); transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease; }
+  /* Search bar */
+    .search { flex: 1; display: flex; align-items: center; gap: 6px; max-width: 420px; margin: 0 8px; padding: 6px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+    .search input[type="search"] { flex: 1; border: 0; outline: 0; padding: 8px 10px; background: transparent; color: var(--text); }
+    .search input[type="search"]::placeholder { color: #9ca3af; }
+    .search button { border: 0; background: transparent; cursor: pointer; color: #6b7280; padding: 6px 8px; border-radius: 8px; }
+    .search button:hover { background: #f3f4f6; color: #111827; }
+  /* Brand with icon */
+    .brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; }
+    .brand .logo { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; }
+    .brand .logo svg { display: block; width: 22px; height: 22px; }
+  /* Sections enhancement */
+    main.container > section { margin-bottom: 20px; }
+    .panel.products { border-radius: 16px; padding: 22px; }
+    .products h2 { position: relative; padding-bottom: 8px; }
+    .products h2::after { content: ""; display: block; width: 56px; height: 2px; background: linear-gradient(90deg, #111827, #9ca3af); border-radius: 2px; margin-top: 8px; opacity: 0.6; }
+    .product-card { transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease; }
+    .product-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08); }
+    .product-card .product-media { border-color: #e9edf3; }
+    .product-card:hover .product-media { border-color: #d7dce4; }
+    .chip { transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease; }
+    .chip:hover { background: #ffffff; border-color: #d8dbe2; box-shadow: 0 2px 6px rgba(17, 24, 39, 0.06); transform: translateY(-1px); }
+    .chip.active { background: #111827; color: #fff; border-color: #111827; box-shadow: 0 2px 10px rgba(17, 24, 39, 0.14); }
+    .chip:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04); }
+    .chip:focus-visible { outline: 2px solid #c7d2fe; outline-offset: 2px; }
+    #featured, #new { scroll-margin-top: 90px; }
+
+    /* Toasts */
+    .toast-container { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 8px; z-index: 1000; }
+    .toast { display: grid; grid-auto-flow: column; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 1px solid #e6eaf0; background: #111827; color: #fff; box-shadow: 0 10px 20px rgba(17,24,39,.18); opacity: .98; transform: translateY(0); transition: opacity .2s ease, transform .2s ease; }
+    .toast--success { background: #16a34a; border-color: #16a34a; }
+    .toast--info { background: #111827; }
+    .toast.hide { opacity: 0; transform: translateY(4px); }
+
+    /* Footer enhanced */
+    .site-footer { background: var(--panel); border-top: 1px solid var(--line); margin-top: 40px; }
+    .site-footer .container { padding-top: 24px; padding-bottom: 28px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .footer-col h4 { margin: 0 0 8px; font-size: 16px; }
+    .footer-links { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+    .footer-links a { color: inherit; text-decoration: none; opacity: .8; }
+    .footer-links a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 2px; }
+    .newsletter { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .newsletter input { height: 40px; }
+    .newsletter .btn { height: 40px; padding: 0 14px; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 16px; margin-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    .footer-mini-nav { display: flex; gap: 10px; }
+    .footer-mini-nav a { color: inherit; text-decoration: none; }
+    .footer-mini-nav a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="./home.html" aria-label="FashionHub - Trang chủ">
+        <span class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+            <path d="M15.2 3.2 12 5.2 8.8 3.2 5 5v4l2.5 1.5V21h9V10.5L19 9V5l-3.8-1.8Z"/>
+          </svg>
+        </span>
+        <span>FashionHub</span>
+      </a>
+      <form class="search" id="siteSearch" role="search" onsubmit="return false;">
+        <input type="search" id="q" placeholder="Tìm sản phẩm..." aria-label="Tìm sản phẩm" />
+        <button type="button" id="clearSearch" title="Xóa tìm kiếm">✕</button>
+      </form>
+      <nav class="nav">
+        <a href="./home.html">Home</a>
+        <a href="./register.html">Register</a>
+        <a href="./user.html">User</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./index.html" class="btn secondary" style="text-decoration:none;">Đăng nhập</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Banner (Hero) -->
+    <section class="hero" aria-label="Bộ sưu tập mới">
+      <div class="hero__media" aria-hidden="true"></div>
+      <div class="hero__overlay" aria-hidden="true"></div>
+      <div class="hero__content">
+        <div class="hero__eyebrow">Bộ sưu tập Thu - Đông</div>
+        <h1>Nâng tầm phong cách mỗi ngày</h1>
+        <p class="sub">Các item tối giản, chất liệu cao cấp, dễ phối và bền bỉ theo thời gian.</p>
+        <div class="hero__actions">
+          <a class="btn" href="#featured">Mua ngay</a>
+          <a class="btn secondary" href="#new">Xem hàng mới</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Danh mục nhanh -->
+    <section>
+      <div class="categories" id="cats">
+        <a class="chip active" href="#" data-cat="all">Tất cả</a>
+        <a class="chip" href="#" data-cat="ao">Áo</a>
+        <a class="chip" href="#" data-cat="quan">Quần</a>
+        <a class="chip" href="#" data-cat="outerwear">Outerwear</a>
+        <a class="chip" href="#" data-cat="phu-kien">Phụ kiện</a>
+        <a class="chip" href="#" data-cat="giay">Giày</a>
+      </div>
+    </section>
+
+    <!-- Sản phẩm nổi bật -->
+    <section class="panel products" id="featured">
+      <h2>Sản phẩm nổi bật</h2>
+      <div class="grid">
+        <article class="card product-card">
+          <div class="product-media">
+            <span class="badge">New</span>
+            <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=60" data-local="img/Logo Cotton T-shirt.webp" data-remote="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=60" alt="Áo thun Basic màu trắng" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Áo thun Basic</h3>
+            <div class="product-meta">
+              <span class="price">299.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Áo thun Basic" data-price="299000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1520975979651-7dd21a1f9a8b?auto=format&fit=crop&w=800&q=60" data-local="img/Slim Fit Check Cotton Shirt.webp" data-remote="https://images.unsplash.com/photo-1520975979651-7dd21a1f9a8b?auto=format&fit=crop&w=800&q=60" alt="Áo sơ mi Linen" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Áo sơ mi Linen</h3>
+            <div class="product-meta">
+              <span class="price">499.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Áo sơ mi Linen" data-price="499000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <span class="badge">-20%</span>
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=800&q=60" data-local="img/Stretch Cotton Shirt.webp" data-remote="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=800&q=60" alt="Quần jeans Slim" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Quần jeans Slim</h3>
+            <div class="product-meta">
+              <span class="price">699.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Quần jeans Slim" data-price="699000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1520975661595-6453be3f7070?auto=format&fit=crop&w=800&q=60" data-local="img/EKD Cotton T-shirt.webp" data-remote="https://images.unsplash.com/photo-1520975661595-6453be3f7070?auto=format&fit=crop&w=800&q=60" alt="Áo khoác Lightweight" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Áo khoác Lightweight</h3>
+            <div class="product-meta">
+              <span class="price">899.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Áo khoác Lightweight" data-price="899000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1542060748-10c28b62716b?auto=format&fit=crop&w=800&q=60" data-local="assets/images/product-5.jpg" data-remote="https://images.unsplash.com/photo-1542060748-10c28b62716b?auto=format&fit=crop&w=800&q=60" alt="Áo len Minimal" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Áo len Minimal</h3>
+            <div class="product-meta">
+              <span class="price">599.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Áo len Minimal" data-price="599000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1526152505823-4c69b81f1d87?auto=format&fit=crop&w=800&q=60" data-local="assets/images/product-6.jpg" data-remote="https://images.unsplash.com/photo-1526152505823-4c69b81f1d87?auto=format&fit=crop&w=800&q=60" alt="Váy midi" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Váy midi</h3>
+            <div class="product-meta">
+              <span class="price">749.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Váy midi" data-price="749000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=60" data-local="assets/images/product-7.jpg" data-remote="https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=800&q=60" alt="Sneakers trắng" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Sneakers trắng</h3>
+            <div class="product-meta">
+              <span class="price">990.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Sneakers trắng" data-price="990000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=800&q=60" data-local="assets/images/product-8.jpg" data-remote="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=800&q=60" alt="Túi tote canvas" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Túi tote canvas</h3>
+            <div class="product-meta">
+              <span class="price">259.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Túi tote canvas" data-price="259000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Hàng mới -->
+    <section class="panel products" id="new">
+      <h2>Hàng mới về</h2>
+      <p class="sub">Cập nhật mỗi tuần — phong cách tối giản, dễ phối</p>
+      <div class="grid">
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1533867617858-e7b97b111d8b?auto=format&fit=crop&w=800&q=60" data-local="assets/images/product-9.jpg" data-remote="https://images.unsplash.com/photo-1533867617858-e7b97b111d8b?auto=format&fit=crop&w=800&q=60" alt="Áo polo" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Áo polo</h3>
+            <div class="product-meta">
+              <span class="price">399.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Áo polo" data-price="399000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1520975922284-7b7222ae47f0?auto=format&fit=crop&w=800&q=60" data-local="assets/images/product-10.jpg" data-remote="https://images.unsplash.com/photo-1520975922284-7b7222ae47f0?auto=format&fit=crop&w=800&q=60" alt="Chân váy kẻ" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Chân váy kẻ</h3>
+            <div class="product-meta">
+              <span class="price">529.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Chân váy kẻ" data-price="529000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=60" data-local="img/Cross%20Stitch%20EKD%E2%80%8B%20Cotton%20T-shirt.webp" data-remote="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=800&q=60" alt="Cross Stitch EKD Cotton T-shirt" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Cross Stitch EKD Cotton T-shirt</h3>
+            <div class="product-meta">
+              <span class="price">399.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Cross Stitch EKD Cotton T-shirt" data-price="399000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=800&q=60" data-local="img/Flare%20Jeans.avif" data-remote="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=800&q=60" alt="Flare Jeans" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Flare Jeans</h3>
+            <div class="product-meta">
+              <span class="price">549.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Flare Jeans" data-price="549000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=60" data-local="img/New%20York%20Yankees%20%27Ultrasuede%27%20%2747%20MVP%20DT%20Strapback.avif" data-remote="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=60" alt="New York Yankees Ultrasuede '47 MVP DT Strapback" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">New York Yankees Ultrasuede '47 MVP DT Strapback</h3>
+            <div class="product-meta">
+              <span class="price">629.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="New York Yankees Ultrasuede '47 MVP DT Strapback" data-price="629000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-media">
+            <img src="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=800&q=60" data-local="img/Straight Raw Jeans" data-remote="https://images.unsplash.com/photo-1503342217505-b0a15cf70489?auto=format&fit=crop&w=800&q=60" alt="Straight Raw Jeans" />
+          </div>
+          <div class="product-body">
+            <h3 class="product-title">Straight Raw Jeans</h3>
+            <div class="product-meta">
+              <span class="price">599.000đ</span>
+              <button class="btn secondary add-to-cart" data-name="Straight Raw Jeans" data-price="599000">Thêm vào giỏ</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>FashionHub</h4>
+          <p class="sub">Nâng tầm phong cách mỗi ngày với những item tối giản, chất liệu tốt và bền bỉ.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Danh mục</h4>
+          <ul class="footer-links">
+            <li><a href="#featured">Sản phẩm nổi bật</a></li>
+            <li><a href="#new">Hàng mới về</a></li>
+            <li><a href="./cart.html">Giỏ hàng</a></li>
+            <li><a href="./contact.html">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Hỗ trợ</h4>
+          <ul class="footer-links">
+            <li><a href="#">Câu hỏi thường gặp</a></li>
+            <li><a href="#">Chính sách đổi trả</a></li>
+            <li><a href="#">Vận chuyển</a></li>
+            <li><a href="#">Bảo mật</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Nhận tin</h4>
+          <form class="newsletter" novalidate>
+            <input type="email" placeholder="Email của bạn" aria-label="Email" />
+            <button class="btn" type="submit">Đăng ký</button>
+          </form>
+          <p class="sub" style="margin-top:8px">Nhận thông tin ưu đãi và bộ sưu tập mới mỗi tuần.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© FashionHub</span>
+        <nav class="footer-mini-nav">
+          <a href="#">Điều khoản</a>
+          <a href="#">Quyền riêng tư</a>
+          <a href="#">Cookies</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+  <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    (function () {
+      const SESSION_KEY = 'fashionhub:session';
+      const USERS_KEY = 'fashionhub:users';
+
+      function getSession() {
+        try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch (e) { return null; }
+      }
+      function getUser(email) {
+        try { const users = JSON.parse(localStorage.getItem(USERS_KEY)) || {}; return users[email]; } catch (e) { return null; }
+      }
+
+      const session = getSession();
+      if (!session || !session.email) {
+        window.location.href = './index.html';
+        return;
+      }
+
+      const nav = document.querySelector('.nav');
+      const authLink = nav && nav.querySelector('a[href$="index.html"]');
+      if (nav) {
+        const who = document.createElement('span');
+        who.className = 'muted';
+        who.id = 'who';
+        const user = getUser(session.email);
+        who.textContent = (user && user.name) ? `Xin chào, ${user.name}` : `Xin chào, ${session.email}`;
+        if (authLink) nav.insertBefore(who, authLink);
+        else nav.appendChild(who);
+      }
+      if (authLink) {
+        authLink.textContent = 'Đăng xuất';
+        authLink.href = '#';
+        authLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          localStorage.removeItem(SESSION_KEY);
+          window.location.href = './index.html';
+        });
+      }
+
+      // Demo thêm vào giỏ (localStorage) nhẹ nhàng
+      const CART_KEY = 'fashionhub:cart';
+      function loadCart() { try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch(e){ return []; } }
+      function saveCart(items) { localStorage.setItem(CART_KEY, JSON.stringify(items)); }
+      function showToast(message, type = 'info') {
+        const ctn = document.getElementById('toastContainer');
+        if (!ctn) return;
+        const t = document.createElement('div');
+        t.className = 'toast ' + (type === 'success' ? 'toast--success' : 'toast--info');
+        t.setAttribute('role','status');
+        t.textContent = message;
+        ctn.appendChild(t);
+        setTimeout(() => { t.classList.add('hide'); }, 2200);
+        setTimeout(() => { t.remove(); }, 2600);
+        t.addEventListener('click', () => t.remove());
+      }
+
+      document.querySelectorAll('.add-to-cart').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const card = btn.closest('.product-card');
+          const imgEl = card ? card.querySelector('.product-media img') : null;
+          const image = imgEl ? (imgEl.currentSrc || imgEl.src) : '';
+          const name = this.getAttribute('data-name');
+          const price = parseInt(this.getAttribute('data-price'), 10) || 0;
+          const cart = loadCart();
+          const existing = cart.find(i => i.name === name);
+          if (existing) {
+            existing.qty += 1;
+            if (image && !existing.image) existing.image = image;
+          } else {
+            cart.push({ name, price, qty: 1, image });
+          }
+          saveCart(cart);
+          showToast(`Đã thêm "${name}" vào giỏ hàng`, 'success');
+          this.textContent = 'Đã thêm';
+          setTimeout(() => this.textContent = 'Thêm vào giỏ', 900);
+        });
+      });
+
+      // Favorites
+      const FAV_KEY = 'fashionhub:favs';
+      function loadFavs() { try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch(e){ return []; } }
+      function saveFavs(list) { localStorage.setItem(FAV_KEY, JSON.stringify(list)); }
+      function markFavButtons() {
+        const favs = new Set(loadFavs());
+        document.querySelectorAll('.fav-btn').forEach(b => {
+          const n = b.dataset.name;
+          b.classList.toggle('active', !!n && favs.has(n));
+        });
+      }
+      function ensureFavButtons() {
+        document.querySelectorAll('.product-card').forEach(card => {
+          const media = card.querySelector('.product-media');
+          if (!media) return;
+          if (media.querySelector('.fav-btn')) return;
+          const title = (card.querySelector('.product-title')?.textContent || '').trim();
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'fav-btn';
+          btn.setAttribute('aria-label', 'Yêu thích');
+          btn.dataset.name = title;
+          btn.innerHTML = '❤';
+          media.appendChild(btn);
+        });
+        document.querySelectorAll('.fav-btn').forEach(btn => {
+          btn.addEventListener('click', function(e){
+            e.stopPropagation();
+            const name = this.dataset.name;
+            let favs = loadFavs();
+            const i = favs.indexOf(name);
+            const added = i === -1;
+            if (added) favs.push(name); else favs.splice(i,1);
+            saveFavs(favs);
+            markFavButtons();
+            showToast(added ? `Đã thêm "${name}" vào yêu thích` : `Đã bỏ "${name}" khỏi yêu thích`, added ? 'success' : 'info');
+          });
+        });
+        markFavButtons();
+      }
+      ensureFavButtons();
+
+      // Product images: prefer local assets with graceful fallback
+      function swapToLocalImages() {
+        document.querySelectorAll('.product-media img').forEach(img => {
+          const local = img.getAttribute('data-local');
+          const remote = img.getAttribute('data-remote') || img.src;
+          if (!local) return;
+          const i = new Image();
+          i.onload = () => { img.src = local; };
+          i.onerror = () => { img.src = remote; };
+          i.src = local;
+        });
+      }
+      swapToLocalImages();
+
+      // Update product titles based on local image filenames
+      (function updateTitlesFromLocalImages(){
+        document.querySelectorAll('.product-card').forEach(card => {
+          const img = card.querySelector('.product-media img');
+          if (!img) return;
+          const local = img.getAttribute('data-local') || '';
+          if (!local.startsWith('img/')) return; // only use local img names
+          const file = local.split('/').pop();
+          const base = decodeURIComponent(file).replace(/\.[a-z0-9]+$/i, '');
+          const titleEl = card.querySelector('.product-title');
+          if (titleEl && base) {
+            const name = base.trim();
+            titleEl.textContent = name;
+            const btn = card.querySelector('.add-to-cart');
+            if (btn) btn.dataset.name = name;
+          }
+        });
+      })();
+
+      // Newsletter subscribe toast
+      const newsForm = document.querySelector('.newsletter');
+      if (newsForm) {
+        newsForm.addEventListener('submit', function(e){
+          e.preventDefault();
+          const emailInput = this.querySelector('input[type="email"]');
+          const email = emailInput ? emailInput.value.trim() : '';
+          if (email) showToast('Đã đăng ký nhận tin', 'success');
+          else showToast('Vui lòng nhập email hợp lệ', 'info');
+          this.reset();
+        });
+      }
+
+      // Hero slider
+      (function(){
+        const hero = document.querySelector('.hero');
+        const media = document.querySelector('.hero__media');
+        if (!hero || !media) return;
+        const localCandidates = [
+          'img/Logo Cotton T-shirt.webp',
+          'img/Stretch Cotton Shirt.webp',
+          'img/Slim Fit Check Cotton Shirt.webp'
+        ];
+        const remoteFallbacks = [
+          'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=60',
+          'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=1600&q=60',
+          'https://images.unsplash.com/photo-1520975916090-3105956dac38?auto=format&fit=crop&w=1600&q=60'
+        ];
+        let images = remoteFallbacks.slice();
+        function testImage(url) {
+          return new Promise((res) => {
+            const i = new Image();
+            i.onload = () => res({ url, ok: true });
+            i.onerror = () => res({ url, ok: false });
+            i.src = url;
+          });
+        }
+        async function pickImages() {
+          const results = await Promise.all(localCandidates.map(testImage));
+          const ok = results.filter(r => r.ok).map(r => r.url);
+          if (ok.length) images = ok;
+        }
+        let current = 0;
+        const nav = document.createElement('div');
+        nav.className = 'hero__nav';
+        images.forEach((_, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'hero__dot';
+          dot.type = 'button';
+          dot.addEventListener('click', () => { current = i; render(); restart(); });
+          nav.appendChild(dot);
+        });
+        hero.appendChild(nav);
+
+        function updateDots() {
+          hero.querySelectorAll('.hero__dot').forEach((d, i) => d.classList.toggle('is-active', i === current));
+        }
+        function render() {
+          media.style.backgroundImage = `url('${images[current]}')`;
+          updateDots();
+        }
+        function next() { current = (current + 1) % images.length; render(); }
+        let timer = null;
+        function start() { timer = setInterval(next, 4000); }
+        function stop() { if (timer) clearInterval(timer); timer = null; }
+        function restart() { stop(); start(); }
+
+        hero.addEventListener('mouseenter', stop);
+        hero.addEventListener('mouseleave', start);
+
+        render();
+        pickImages().then(() => render());
+        start();
+      })();
+    })();
+  </script>
+  <script>
+    (function(){
+      const input = document.getElementById('q');
+      const clearBtn = document.getElementById('clearSearch');
+      const chips = Array.from(document.querySelectorAll('.categories .chip'));
+      const cards = Array.from(document.querySelectorAll('.product-card'));
+      if (!cards.length) return;
+
+      function inferCat(title) {
+        const t = (title || '').toLowerCase();
+        if (t.includes('áo khoác')) return 'outerwear';
+        if (t.includes('sneakers') || t.includes('giày')) return 'giay';
+        if (t.includes('túi')) return 'phu-kien';
+        if (t.includes('váy')) return 'vay';
+        if (t.includes('quần')) return 'quan';
+        if (t.includes('áo')) return 'ao';
+        return 'khac';
+      }
+
+      // Gắn danh mục vào mỗi card dựa trên tiêu đề
+      cards.forEach(card => {
+        if (!card.dataset.cat) {
+          const titleEl = card.querySelector('.product-title');
+          card.dataset.cat = inferCat(titleEl ? titleEl.textContent : '');
+        }
+      });
+
+      function activeCategory() {
+        const act = chips.find(c => c.classList.contains('active'));
+        return act ? (act.dataset.cat || 'all') : 'all';
+      }
+
+      function applyFilters() {
+        const q = (input && input.value || '').trim().toLowerCase();
+        const cat = activeCategory();
+        cards.forEach(card => {
+          const titleEl = card.querySelector('.product-title');
+          const title = titleEl ? titleEl.textContent.toLowerCase() : '';
+          const matchText = !q || title.includes(q);
+          const matchCat = (cat === 'all') || (card.dataset.cat === cat);
+          card.style.display = (matchText && matchCat) ? '' : 'none';
+        });
+      }
+
+      if (input) input.addEventListener('input', applyFilters);
+      if (clearBtn && input) clearBtn.addEventListener('click', function(){
+        input.value = '';
+        applyFilters();
+        input.focus();
+      });
+
+      chips.forEach(chip => {
+        chip.addEventListener('click', function(e){
+          e.preventDefault();
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          applyFilters();
+        });
+      });
+
+      applyFilters();
+    })();
+  </script>
+</body>
+</html>

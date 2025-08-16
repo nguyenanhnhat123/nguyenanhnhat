@@ -1,0 +1,37 @@
+/* Page-specific styles for Cart page */
+body {
+  background:
+    radial-gradient(600px 500px at 0% 50%, #eef2ff 0%, transparent 55%),
+    radial-gradient(600px 400px at 100% 50%, #f1f5f9 0%, transparent 55%),
+    var(--bg);
+}
+
+main.container { padding-top: 28px; padding-bottom: 28px; }
+
+main .panel {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 16px;
+  border: 1px solid #e6eaf0;
+  background: linear-gradient(180deg, #ffffff, #f9fafb);
+  box-shadow: 0 12px 28px rgba(17, 24, 39, 0.08);
+  padding: 24px;
+}
+
+main .panel::before {
+  content: "";
+  display: block;
+  height: 4px;
+  margin: -24px -24px 16px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, #6366f1, #22d3ee);
+}
+
+/* Cart items refinement */
+#cartList .item { background: linear-gradient(180deg, #ffffff, #f8fafc); border: 1px solid #e6eaf0; }
+#cartList .item .muted { color: #667084; }
+#cartList .item:hover { box-shadow: 0 10px 22px rgba(17,24,39,0.08); }
+#cartList .price { font-size: 16px; }
+
+/* Summary row */
+#total { font-size: 20px; }

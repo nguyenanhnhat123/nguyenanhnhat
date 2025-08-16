@@ -1,0 +1,197 @@
+/* Minimal shared styles for FashionHub */
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --btn: #111827;
+  --btn-text: #ffffff;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layout */
+.container { width: 100%; max-width: 1040px; margin: 0 auto; padding: 20px; }
+.spacer-s { height: 8px; }
+.spacer { height: 16px; }
+.spacer-l { height: 28px; }
+
+/* Header (enhanced) */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: saturate(180%) blur(8px);
+  -webkit-backdrop-filter: saturate(180%) blur(8px);
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.05);
+}
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.brand {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  font-size: 18px;
+}
+.brand::after {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: currentColor;
+  opacity: 0.2;
+  border-radius: 50%;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f9fafb;
+}
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.06s ease;
+}
+.nav a:hover { background: #eef2f7; }
+.nav a:active { transform: translateY(1px); }
+.nav a:focus-visible { outline: 2px solid #c7d2fe; outline-offset: 2px; }
+/* Hide Register link in header across site */
+.nav a[href$="register.html"] { display: none !important; }
+/* Hide Login link in header across site */
+.nav a[href$="index.html"] { display: none !important; }
+
+/* Make the login button stand out slightly in header */
+.nav .btn.secondary {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid var(--line);
+}
+
+@media (max-width: 720px) {
+  .brand { font-size: 16px; }
+  .nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+/* Footer */
+.site-footer { margin-top: 40px; border-top: 1px solid var(--line); color: var(--muted); }
+.site-footer .container { padding-top: 16px; padding-bottom: 24px; text-align: center; font-size: 13px; }
+
+/* Panels and cards */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+/* Typography */
+h1 { font-size: 24px; margin: 0 0 8px; }
+h2 { font-size: 20px; margin: 0 0 8px; }
+.sub { color: var(--muted); font-size: 14px; margin: 0 0 12px; }
+
+/* Forms */
+.field { margin-top: 12px; }
+label { display: block; font-size: 14px; margin-bottom: 6px; }
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+textarea, select {
+  width: 100%;
+  padding: 12px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+textarea { min-height: 120px; resize: vertical; }
+
+input::placeholder, textarea::placeholder { color: #9ca3af; }
+input:focus, textarea:focus, select:focus {
+  border-color: #c7d2fe;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 0; border-radius: 8px;
+  background: var(--btn); color: var(--btn-text);
+  font-weight: 600; cursor: pointer;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.btn.secondary { background: #1118270d; color: #111827; border: 1px solid var(--line); }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+
+/* Lists / table-like */
+.list { display: grid; gap: 10px; }
+.list .item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.price { font-weight: 600; }
+
+/* Helpers */
+.muted { color: var(--muted); }
+.center { text-align: center; }
+
+/* Enhanced sections for user/contact/cart */
+main .panel h1 { font-size: 22px; margin-bottom: 4px; }
+main .panel h1::after { content: ""; display: block; width: 56px; height: 2px; background: linear-gradient(90deg, #111827, #9ca3af); border-radius: 2px; margin-top: 6px; opacity: 0.6; }
+
+/* User & Contact forms: responsive 2-column layout */
+#userForm, #contactForm { display: grid; gap: 12px; }
+#userForm .field, #contactForm .field { margin-top: 0; }
+#userForm .btn, #contactForm .btn { justify-self: end; }
+@media (min-width: 720px) {
+  #userForm, #contactForm { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+  #userForm .btn, #contactForm .btn { grid-column: 1 / -1; }
+}
+
+/* Cart list enhancement */
+.list { gap: 12px; }
+.list .item { background: linear-gradient(180deg, #ffffff, #fafbfc); border: 1px solid #e6eaf0; transition: box-shadow 0.15s ease, transform 0.06s ease, border-color 0.15s ease; }
+.list .item:hover { box-shadow: 0 8px 18px rgba(17,24,39,0.06); transform: translateY(-1px); border-color: #d7dce4; }
+.qty { display: inline-block; min-width: 22px; text-align: center; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); background: #1118270d; }
+
+/* Total row emphasis */
+#total { font-size: 18px; }

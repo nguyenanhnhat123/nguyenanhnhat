@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FashionHub — Tài khoản</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./user.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">FashionHub</div>
+      <nav class="nav">
+        <a href="./home.html">Home</a>
+        <a href="./register.html">Register</a>
+        <a href="./user.html">User</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./index.html" class="btn secondary" style="text-decoration:none;">Đăng nhập</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel" role="region" aria-labelledby="title">
+      <h1 id="title">Thông tin tài khoản</h1>
+      <p class="sub">Cập nhật thông tin cơ bản của bạn</p>
+
+      <form id="userForm" novalidate>
+        <div class="field">
+          <label for="name">Họ và tên</label>
+          <input id="name" name="name" type="text" placeholder="Nguyễn Văn A" value="" />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" value="" />
+        </div>
+        <div class="field">
+          <label for="phone">Số điện thoại</label>
+          <input id="phone" name="phone" type="tel" placeholder="090xxxxxxx" value="" />
+        </div>
+        <button class="btn" id="btnSave" type="submit">Lưu</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© FashionHub</div>
+  </footer>
+
+  <script>
+    (function () {
+      const form = document.getElementById('userForm');
+      const btn = document.getElementById('btnSave');
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        btn.disabled = true; btn.textContent = 'Đang lưu...';
+        await new Promise(r => setTimeout(r, 600));
+        btn.disabled = false; btn.textContent = 'Lưu';
+      });
+    })();
+  </script>
+</body>
+</html>

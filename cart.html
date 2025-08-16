@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FashionHub — Giỏ hàng</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./cart.css" />
+  <style>
+    /* Inline cart styles for layout with images and controls */
+    
+    .cart-items { display: grid; gap: 12px; }
+    .cart-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(180deg, #fff, #fafbfc); }
+    .cart-item img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); background: #f3f4f6; }
+    .item-title { margin: 0; font-size: 15px; font-weight: 600; }
+    .item-sub { margin-top: 2px; color: var(--muted); font-size: 13px; }
+
+    .qty-wrap { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 4px; background: #fff; }
+    .qty-btn { width: 28px; height: 28px; border: 0; border-radius: 6px; background: #f3f4f6; cursor: pointer; }
+    .qty-input { width: 48px; text-align: center; border: 0; outline: none; background: transparent; }
+
+    .item-actions { display: flex; align-items: center; gap: 8px; }
+    .item-price { font-weight: 700; min-width: 110px; text-align: right; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">FashionHub</div>
+      <nav class="nav">
+        <a href="./home.html">Home</a>
+        <a href="./register.html">Register</a>
+        <a href="./user.html">User</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./cart.html">Cart</a>
+        <a href="./index.html" class="btn secondary" style="text-decoration:none;">Đăng nhập</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel" role="region" aria-labelledby="title">
+      <h1 id="title">Giỏ hàng của bạn</h1>
+      <p class="sub">Thêm sản phẩm, chỉnh số lượng, xóa và xem tổng tiền theo thời gian thực.</p>
+
+      
+      <div class="cart-items" id="cartList"></div>
+
+      <div class="spacer"></div>
+
+      <div class="row" id="summaryRow">
+        <strong>Tổng cộng</strong>
+        <strong id="total">0đ</strong>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row" style="justify-content: flex-end;">
+        <button class="btn" id="checkoutBtn">Thanh toán</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© FashionHub</div>
+  </footer>
+
+  <script>
+    (function(){
+      const CART_KEY = 'fashionhub:cart';
+      const listEl = document.getElementById('cartList');
+      const totalEl = document.getElementById('total');
+      const addName = document.getElementById('addName');
+      const addPrice = document.getElementById('addPrice');
+      const addQty = document.getElementById('addQty');
+      const addImgUrl = document.getElementById('addImgUrl');
+      const addImgFile = document.getElementById('addImgFile');
+      const btnAdd = document.getElementById('btnAdd');
+
+      function loadCart(){ try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch(e){ return []; } }
+      function saveCart(items){ localStorage.setItem(CART_KEY, JSON.stringify(items)); }
+      function formatVND(n){ try { return (n||0).toLocaleString('vi-VN') + 'đ'; } catch(e){ return (n||0) + 'đ'; } }
+
+      const placeholder = "data:image/svg+xml;utf8,\n<svg xmlns='http://www.w3.org/2000/svg' width='144' height='144' viewBox='0 0 144 144'>\n  <rect width='100%' height='100%' fill='%23f3f4f6'/>\n  <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%239ca3af' font-family='Arial' font-size='12'>No image</text>\n</svg>";
+
+      function render(){
+        const items = loadCart();
+        listEl.innerHTML = '';
+        let sum = 0;
+        if (!items.length){
+          const empty = document.createElement('div');
+          empty.className = 'muted';
+          empty.textContent = 'Giỏ hàng trống.';
+          listEl.appendChild(empty);
+        }
+        items.forEach((it, idx) => {
+          const price = Number(it.price) || 0;
+          const qty = Number(it.qty) || 1;
+          sum += price * qty;
+
+          const row = document.createElement('div');
+          row.className = 'cart-item';
+
+          const img = document.createElement('img');
+          img.src = it.image || placeholder;
+          img.alt = it.name || 'Sản phẩm';
+
+          const info = document.createElement('div');
+          const title = document.createElement('h3');
+          title.className = 'item-title';
+          title.textContent = it.name || 'Sản phẩm';
+          const sub = document.createElement('div');
+          sub.className = 'item-sub';
+          sub.textContent = `Đơn giá: ${formatVND(price)}`;
+          info.appendChild(title); info.appendChild(sub);
+
+          const actions = document.createElement('div');
+          actions.className = 'item-actions';
+
+          const qtyWrap = document.createElement('div');
+          qtyWrap.className = 'qty-wrap';
+          const btnMinus = document.createElement('button'); btnMinus.type='button'; btnMinus.className='qty-btn'; btnMinus.textContent='-';
+          const qtyInput = document.createElement('input'); qtyInput.type='number'; qtyInput.className='qty-input'; qtyInput.min='1'; qtyInput.value = qty;
+          const btnPlus = document.createElement('button'); btnPlus.type='button'; btnPlus.className='qty-btn'; btnPlus.textContent='+';
+          qtyWrap.appendChild(btnMinus); qtyWrap.appendChild(qtyInput); qtyWrap.appendChild(btnPlus);
+
+          const priceEl = document.createElement('div');
+          priceEl.className = 'item-price';
+          priceEl.textContent = formatVND(price * qty);
+
+          const btnRemove = document.createElement('button');
+          btnRemove.type='button'; btnRemove.className='btn secondary'; btnRemove.textContent='Xóa';
+
+          actions.appendChild(qtyWrap);
+          actions.appendChild(priceEl);
+          actions.appendChild(btnRemove);
+
+          row.appendChild(img); row.appendChild(info); row.appendChild(actions);
+          listEl.appendChild(row);
+
+          btnMinus.addEventListener('click', () => { changeQty(idx, (Number(loadCart()[idx]?.qty)||1) - 1); });
+          btnPlus.addEventListener('click', () => { changeQty(idx, (Number(loadCart()[idx]?.qty)||1) + 1); });
+          qtyInput.addEventListener('change', () => { changeQty(idx, Number(qtyInput.value)||1); });
+          btnRemove.addEventListener('click', () => { removeItem(idx); });
+        });
+        totalEl.textContent = formatVND(sum);
+      }
+
+      function changeQty(index, newQty){
+        const items = loadCart();
+        if (!items[index]) return;
+        items[index].qty = Math.max(1, Number(newQty)||1);
+        saveCart(items); render();
+      }
+      function removeItem(index){
+        const items = loadCart();
+        items.splice(index, 1);
+        saveCart(items); render();
+      }
+
+      function addItem(obj){
+        const items = loadCart();
+        // If same name exists, just increase qty
+        const found = items.find(x => (x.name||'').toLowerCase() === (obj.name||'').toLowerCase());
+        if (found) {
+          found.qty = (Number(found.qty)||1) + (Number(obj.qty)||1);
+          // update price/image if provided
+          if (obj.price) found.price = Number(obj.price)||0;
+          if (obj.image) found.image = obj.image;
+        } else {
+          items.push({
+            name: obj.name||'Sản phẩm',
+            price: Number(obj.price)||0,
+            qty: Math.max(1, Number(obj.qty)||1),
+            image: obj.image||''
+          });
+        }
+        saveCart(items); render();
+      }
+
+      function handleAdd(){
+        const name = addName.value.trim();
+        const price = Number(addPrice.value)||0;
+        const qty = Math.max(1, Number(addQty.value)||1);
+        const url = addImgUrl.value.trim();
+        const file = addImgFile.files && addImgFile.files[0];
+
+        if (!name){ addName.focus(); return; }
+        if (file){
+          const reader = new FileReader();
+          reader.onload = () => { addItem({ name, price, qty, image: reader.result }); resetAddForm(); };
+          reader.readAsDataURL(file);
+        } else {
+          addItem({ name, price, qty, image: url });
+          resetAddForm();
+        }
+      }
+      function resetAddForm(){
+        addName.value=''; addPrice.value=''; addQty.value='1'; addImgUrl.value=''; addImgFile.value='';
+      }
+
+      if (btnAdd) btnAdd.addEventListener('click', handleAdd);
+
+      render();
+    })();
+  </script>
+</body>
+</html>
